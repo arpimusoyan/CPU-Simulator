@@ -2,73 +2,75 @@
 #include <fstream>
 #include <string>
 #include <map>
-std::map<std::string, int> mp;
+
+std::map<std::string, int> umap;
+
 struct keywords
 {
-   std::string mov = "imov";
-   std::string add = "iadd";
-   std::string sub = "isub";
-   std::string mul = "imul";
-   std::string div = "idiv";
-   std::string iand = "iand";
-   std::string ior = "ior";
-}inst;
-​
-struct reg 
+   std::string mov = "umov";
+   std::string add = "uadd";
+   std::string sub = "usub";
+   std::string mul = "umul";
+   std::string div = "udiv";
+   std::string uand = "uand";
+   std::string uor = "uor";
+}instruct;
+
+struct registers 
 {
    std::string r1 = "r1";
    std::string r2 = "r2";
    std::string r3 = "r3";
-}regi;
-int string_int (std::string str)
+}reg;
+
+int string_to_int (std::string str)
 {
-​
-   int sum=0, j = 0;
-   bool fl =false;
+   int sum = 0, j = 0;
+   bool fls = false;
    if(str[j]=='-'){
    j++;
-   fl = true;
+   fls = true;
    }
     while(j!= str.size())
     {
       sum = sum*10 + (str[j]-'0');
       j++;
     }
- return !fl ? sum : (-1*sum);
-​
-}
-int change_string (std::string str,int i)
+ return !fls ? sum : (-1*sum);
+ 
+ }
+int transform_string (std::string str,int i)
 {
-   std::string m;
-   bool fl =false;
-   int sum=0, j = 0;
+   std::string s;
+   bool fls =false;
+   int sum = 0, j = 0;
    if(str[i] == 'r')
       {
          while(i < str.size())
          {
-            m += str[i];
+            s += str[i];
             i++;
          }
-         return mp[m];
+         return umap[s];
       }
    if(str[i]=='-'){
    i++;
-   fl = true;
+   fls = true;
    }
    while(i!=str.size())
    {
-     m+=str[i];
+     s +=str[i];
      i++;
    }
    
-    while(j!= m.size())
+    while(j!= s.size())
     {
-      sum = sum*10 + (m[j]-'0');
+      sum = sum*10 + (s[j]-'0');
       j++;
     }
- return !fl ? sum : (-1*sum);
+ return !fls ? sum : (-1*sum);
 }
-void mull(std::string str, int i)
+void umul (std::string str, int i)
 {
    std::string r1,r2;
   while(str[i] != ','){
@@ -80,18 +82,18 @@ i = i+1;
     r2+=str[i];
     i++;
   }
-​
+
    if(r2[0]=='r')
     {
-      mp[r1] *= mp[r2];
+      umap[r1] *= umap[r2];
     }
     else
     {
-      mp[r1] *= string_int (r2);
+      umap[r1] *= string_to_int (r2);
     }
     
 }
-void andd(std::string str, int i)
+void uand(std::string str, int i)
 {
    std::string r1,r2;
   while(str[i] != ','){
@@ -103,21 +105,20 @@ i = i+1;
     r2+=str[i];
     i++;
   }
-​
    if(r2[0]=='r')
     {
-      mp[r1] &= mp[r2];
+      umap[r1] &= umap[r2];
     }
     else
     {
-      mp[r1] &= string_int (r2);
+      umap[r1] &= string_to_int (r2);
     }
     
 }
-void orr(std::string str, int i)
+void uor(std::string str, int i)
 {
    std::string r1,r2;
-  while(str[i] != ','){
+   while(str[i] != ','){
     r1+=str[i];
     ++i;
 }
@@ -125,19 +126,18 @@ i = i+1;
   while(i != str.size()){
     r2+=str[i];
     i++;
-  }
-​
-   if(r2[0]=='r')
+   }
+    if(r2[0]=='r')
     {
-      mp[r1] |= mp[r2];
+      umap[r1] |= umap[r2];
     }
     else
     {
-      mp[r1] |= string_int (r2);
+      umap[r1] |= string_to_int (r2);
     }
     
 }
-void divv(std::string str, int i)
+void udiv(std::string str, int i)
 {
    std::string r1,r2;
   while(str[i] != ','){
@@ -151,24 +151,23 @@ i = i+1;
   }
    if(r2[0]=='r')
     {
-      if(mp[r2] == 0)
+      if(umap[r2] == 0)
       std::cout << "Error " << std::endl;
       else
-      mp[r1] /= mp[r2];
+      umap[r1] /= umap[r2];
     }
     else
     {
-       if(string_int(r2))
-      mp[r1] /= string_int(r2);
+       if(string_to_int(r2))
+      umap[r1] /= string_to_int(r2);
       else
       std::cout << "Error " << std::endl;
     }
-    
 }
-void subb (std::string str,int i)
+    
+void usub (std::string str,int i)
 {
-​
-std::string r1,r2;
+  std::string r1,r2;
   while(str[i] != ','){
     r1+=str[i];
     ++i;
@@ -177,19 +176,18 @@ i = i+1;
   while(i != str.size()){
     r2+=str[i];
     i++;
-  }
-​
-   if(r2[0]=='r')
+  }  
+  if(r2[0]=='r')
     {
-mp[r1] -= mp[r2];
+umap[r1] -= umap[r2];
     }
     else
     {
-      mp[r1] -= string_int(r2);
+      umap[r1] -= string_to_int(r2);
     }
     
 }
-void addi(std::string str, int i)
+void uadd (std::string str, int i)
 {
    std::string r1,r2;
   while(str[i] != ','){
@@ -201,18 +199,17 @@ i = i+1;
     r2+=str[i];
     i++;
   }
-​
-   if(r2[0]=='r')
+  if(r2[0]=='r')
     {
-      mp[r1] += mp[r2];
+      umap[r1] += umap[r2];
     }
     else
     {
-      mp[r1] += string_int(r2);
+      umap[r1] += string_to_int(r2);
     }
     
 }
-void cmp_reg (std::string str,int i)
+void ucmp (std::string str,int i)
 {
    std::string m;
    while(str[i]!=',')
@@ -220,23 +217,22 @@ void cmp_reg (std::string str,int i)
      m+=str[i];
      i++;
    }
-    if (m == regi.r1) {
-        mp[m] = change_string(str, i+1);
+    if (m == reg.r1) {
+        umap[m] = transform_string(str, i+1);
          return;
       }
-      if (m == regi.r2) {
-        mp[m] = change_string(str, i+1);
+      if (m == reg.r2) {
+        umap[m] = transform_string(str, i+1);
          return;
       }
-      if (m == regi.r3) {
+      if (m == reg.r3) {
          
-          mp[m] = change_string(str, i+1);
+          umap[m] = transform_string(str, i+1);
          return;
          
       }
-​
 }
-void dec(std::string str)
+void udec(std::string str)
 {
    std::string str1;
    for(int i = 0; i < str.size();i++)
@@ -245,38 +241,37 @@ void dec(std::string str)
         str1 += str[i];
         i++;
       }
-      if (str1 == inst.mov) {
-            cmp_reg(str, i+1);
+      if (str1 == instruct.mov) {
+            ucmp (str, i+1);
          return;
       }
-      if (str1 == inst.add) {
-          addi(str, i+1);
+      if (str1 == instruct.add) {
+          uadd(str, i+1);
          return;  
       }
-      if (str1 == inst.sub) {
-          subb(str, i+1);
+      if (str1 == instruct.sub) {
+          usub(str, i+1);
          return;  
       }
-      if (str1 == inst.mul) {
-          mull(str, i+1);
+      if (str1 == instruct.mul) {
+          umul(str, i+1);
          return;  
       }
-      if (str1 == inst.div) {
-          divv(str, i+1);
+      if (str1 == instruct.div) {
+          udiv(str, i+1);
          return;  
       }
-      if (str1 == inst.iand) {
-          andd(str, i+1);
+      if (str1 == instruct.uand) {
+          uand(str, i+1);
          return;  
       }
-      if (str1 == inst.ior) {
-          orr(str, i+1);
+      if (str1 == instruct.uor) {
+          uor(str, i+1);
          return;  
       }
      
    }
 }
-​
 int main()
 {
   std::ifstream text("cpu.txt");
@@ -292,7 +287,7 @@ int main()
    while(!text.eof())
    {
       getline(text,str);
-      dec(str);
+      udec(str);
    }
  }
   text.close();
